@@ -10,6 +10,7 @@ import GAMES_DATA from './games.js';
 // create a list of objects to store the data about the games using JSON.parse
 const GAMES_JSON = JSON.parse(GAMES_DATA)
 
+
 // remove all child elements from a parent element in the DOM
 function deleteChildElements(parent) {
     while (parent.firstChild) {
@@ -27,27 +28,40 @@ const gamesContainer = document.getElementById("games-container");
 
 // create a function that adds all data from the games array to the page
 function addGamesToPage(games) {
-
     // loop over each item in the data
-
-
+    //forEach goes over each value in the list of ojbects games
+    // game = one value in games
+    games.forEach(game => {
         // create a new div element, which will become the game card
-
-
+        // document.createElement - creates a new element in the document
+        const gameCard = document.createElement('div');
         // add the class game-card to the list
-
-
+        gameCard.classList.add('game-card');
         // set the inner HTML using a template literal to display some info 
         // about each game
-        // TIP: if your images are not displaying, make sure there is space
-        // between the end of the src attribute and the end of the tag ("/>")
-
-
+        //call upon each key in the game value (game.key) to get their value
+        //back ticks so it reads the ${}
+        gameCard.innerHTML = `
+            <img src= ${game.img} alt="Game Image" class = "game-img">
+            <div>
+                <h4><b>Name: ${game.name}</b></h4>
+                <p>Description: ${game.description}</p>
+                <p>Pledged: ${game.pledged}</p>
+                <p>Goal: ${game.goal}</p>
+                <p>Backers: ${game.backers}</p>
+            </div>
+        `;
         // append the game to the games-container
+        //this element is grabbed outside the function
+        gamesContainer.appendChild(gameCard)
 
+    })
+    // TIP: if your images are not displaying, make sure there is space
+    // between the end of the src attribute and the end of the tag ("/>")
 }
 
 // call the function we just defined using the correct variable
+addGamesToPage(GAMES_JSON)
 // later, we'll call this function using a different list of games
 
 
@@ -61,19 +75,40 @@ function addGamesToPage(games) {
 const contributionsCard = document.getElementById("num-contributions");
 
 // use reduce() to count the number of total contributions by summing the backers
-
+//call reduce on GAMES_JSON object
+//acc = accumulator (fancy word for the total added)
+//game = the object from GAMES_JSON (one at a time ladies)
+//using dot notation to get the backers for each game and add them all
+const contributions = GAMES_JSON.reduce((acc, game) => {
+    return acc + game.backers;
+}, 0)
+//check you get an accurate number, should be:19187 (counted them myself)
+console.log(contributions)
 
 // set the inner HTML using a template literal and toLocaleString to get a number with commas
-
+const contribFormatted = contributions.toLocaleString('en-US')
+contributionsCard.innerHTML = `${contribFormatted}`
 
 // grab the amount raised card, then use reduce() to find the total amount raised
 const raisedCard = document.getElementById("total-raised");
-
+const raised = GAMES_JSON.reduce((acc, game) => {
+    return acc + game.pledged;
+}, 0)
+console.log(raised)
 // set inner HTML using template literal
-
+const raisedFormatted = raised.toLocaleString('en-US')
+raisedCard.innerHTML = `$${raisedFormatted}`
 
 // grab number of games card and set its inner HTML
 const gamesCard = document.getElementById("num-games");
+const games = GAMES_JSON.reduce((acc, game) => {
+    return acc + 1
+}, 0)
+console.log(games)
+
+const gamesFormatted = games.toLocaleString('en-US')
+gamesCard.innerHTML = `${gamesFormatted}`
+
 
 
 /*************************************************************************************
