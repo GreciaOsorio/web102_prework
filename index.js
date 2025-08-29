@@ -206,3 +206,85 @@ console.log(mostFunded2)
 const mFGame2 = document.createElement('p')
 mFGame2.innerHTML = mostFunded2
 secondGameContainer.appendChild(mFGame2)
+
+/************************************************************************************
+ * Bonus: Add ons & UX/UI modified
+ */
+const searchInput = document.getElementById("search");
+const searchBtn = document.getElementById("search-btn");
+
+function scrollToGamesSection() {
+    const gamesSection = document.getElementById('games');
+    gamesSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+function getMatchingGames(searchInput){
+    const gameCards = document.querySelectorAll('.game-card');
+    let matched = false;
+
+    gameCards.forEach(game => {
+        const gameNameEl = game.querySelector('h4');
+
+        if(gameNameEl){
+            const gameName = gameNameEl.textContent.toLowerCase();
+
+            if (gameName.includes(searchInput.toLowerCase())){
+                matched = true;
+                game.classList.add('search-highlight');
+
+                setTimeout(()=>{
+                    game.classList.add('fade-out');
+                    setTimeout(()=>{
+                        game.classList.remove('search-highlight', 'fade-out');
+                    }, 300)
+                }, 3000)
+            }
+        }
+
+    });
+    return matched;
+}
+
+function noResults(searchVal){
+    alert(`We are sorry, we could not find "${searchVal}" among our game library. Make sure to be in the all games filter when searching.`)
+}
+
+function executeSearch(){
+    const searchVal = searchInput.value.trim();
+
+    if(!searchVal){
+        alert('Nothing has been search for.');
+        return;
+    }
+
+    let foundInGames = false;
+    GAMES_JSON.forEach(game => {
+        if(game.name.toLowerCase().includes(searchVal.toLowerCase())){
+            foundInGames = true;
+        }
+    });
+
+    if (foundInGames){
+        scrollToGamesSection();
+        setTimeout(()=> {
+            const matched = getMatchingGames(searchVal);
+            if(!matched){
+                noResults(searchVal);
+            }
+        }, 500);
+    } else {
+        noResults(searchVal);
+    }
+    searchInput.value = '';
+}
+
+searchInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter"){
+        executeSearch()
+    }
+});
+
+searchBtn.addEventListener("click", (e)=>{
+    e.preventDefault();
+    executeSearch();
+});
